@@ -1,5 +1,5 @@
 import streamlit as st
-from cookies_manager import CookiesManager
+from streamlit_cookies_manager import CookiesManager
 
 cookies = CookiesManager()
 
