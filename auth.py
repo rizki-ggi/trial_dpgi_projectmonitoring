@@ -1,16 +1,18 @@
 import streamlit as st
+from cookies_manager import CookiesManager
+
+cookies = CookiesManager()
 
 # Function to check the password
 def check_password():
+    # Check cookies for login status
+    cookies.load()
+    if "password_correct" in cookies and cookies["password_correct"] == "true":
+        st.session_state["password_correct"] = True
+        return True
+
     if "password_correct" not in st.session_state:
         st.session_state["password_correct"] = False
-
-    # Check if already logged in through query params
-    if "password_correct" not in st.session_state or not st.session_state["password_correct"]:
-        query_params = st.experimental_get_query_params()
-        if "logged_in" in query_params and query_params["logged_in"][0] == "true":
-            st.session_state["password_correct"] = True
-            return True
 
     if not st.session_state["password_correct"]:
         with st.form("login_form"):
@@ -20,9 +22,10 @@ def check_password():
             if submit_button:
                 if st.session_state["password"] == "ggi2025":
                     st.session_state["password_correct"] = True
-                    # Set query parameter to persist login status
-                    st.experimental_set_query_params(logged_in="true")
-                    st.experimental_rerun()  # Rerun to update session state
+                    # Set cookies to persist login status
+                    cookies["password_correct"] = "true"
+                    cookies.save()
+                    st.experimental_rerun()  # Rerun to update state
                 else:
                     st.error("Incorrect password.")
 
@@ -31,5 +34,6 @@ def check_password():
 # Function to sign out
 def sign_out():
     st.session_state["password_correct"] = False
-    # Clear the query parameters
-    st.experimental_set_query_params()
+    # Clear cookies
+    cookies["password_correct"] = "false"
+    cookies.save()
