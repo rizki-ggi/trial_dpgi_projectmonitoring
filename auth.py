@@ -1,11 +1,11 @@
 import streamlit as st
-from streamlit_cookies_manager import CookiesManager
+from streamlit_cookies_manager import CookieManager
 
-cookies = CookiesManager()
+cookies = CookieManager()
 
 # Function to check the password
 def check_password():
-    # Check cookies for login status
+    # Load cookies
     cookies.load()
     if "password_correct" in cookies and cookies["password_correct"] == "true":
         st.session_state["password_correct"] = True
